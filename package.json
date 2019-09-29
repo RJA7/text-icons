@@ -1,7 +1,7 @@
 {
   "name": "text-icons",
-  "version": "1.0.0",
-  "description": "The tool allows to inline sprites (icons) into text. Can be used with PIXI as well as Phaser",
+  "version": "1.1.0",
+  "description": "The tool allows to inline sprites into text. Can be used with PIXI as well as Phaser",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -11,8 +11,7 @@
     "text",
     "icons",
     "pixi",
-    "phaser",
-    "canvas"
+    "phaser"
   ],
   "author": "RJA",
   "license": "ISC"

@@ -35,5 +35,8 @@ Make sure node_modules compilation is enabled in your project setup.
 
 ## Changelog
 
--> 1.0.0:
+#### 1.00 -> 1.1.0:
+* Make icons size depend on text font size
+
+#### 1.0.0:
 * Initial

@@ -24,8 +24,9 @@ function extend(TextClass) {
 
           if (match) {
             const icon = this.icons[key];
+            const scale = parseInt(this.style.fontSize, 10) / icon.texture.frame.height;
             width -= match.length * measureText.call(ctx, key).width;
-            width += match.length * (icon.x + icon.width);
+            width += match.length * (icon.x + icon.width) * scale;
           }
         }
 
@@ -52,6 +53,7 @@ function extend(TextClass) {
           )
           .split(splitter);
 
+        const fontSize = parseInt(this.style.fontSize, 10);
         let mx = x;
 
         for (let i = 0; i < parts.length; i++) {
@@ -65,17 +67,18 @@ function extend(TextClass) {
           if (order.length === 0) continue;
 
           const icon = order.shift();
+          const scale = fontSize / icon.texture.frame.height;
           const frame = icon.texture.frame;
-          const tx = mx + icon.x;
-          const ty = y + icon.y - icon.height * 0.5;
+          const tx = mx + icon.x * scale;
+          const ty = y - fontSize * 0.5 + (icon.y - icon.height * 0.5) * scale;
 
           ctx.drawImage(
             icon.texture.baseTexture.source,
             frame.x, frame.y, frame.width, frame.height,
-            tx, ty, icon.width, icon.height,
+            tx, ty, icon.width * scale, icon.height * scale,
           );
 
-          mx += icon.x + icon.width;
+          mx += (icon.x + icon.width) * scale;
         }
       };
     }
