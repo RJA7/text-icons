@@ -74,7 +74,7 @@ function extend(TextClass) {
           const scale = fontSize / icon.texture.frame.height;
           const frame = icon.texture.frame;
           const tx = mx + icon.x * scale;
-          const ty = y - fontSize * 0.5 + (icon.y - icon.height * 0.5) * scale;
+          const ty = y - fontSize * 0.35 + (icon.y - icon.height * 0.5) * scale;
 
           ctx.drawImage(
             icon.texture.baseTexture.source,
