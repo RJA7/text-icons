@@ -9,6 +9,10 @@ function extend(TextClass) {
       const measureText = ctx.measureText;
       const fillText = ctx.fillText;
 
+      const getFontSize = () => {
+        return parseInt(this.fontSize || this.style.fontSize, 10);
+      };
+
       ctx.measureText = (text) => {
         const keys = Object.keys(this.icons);
 
@@ -24,7 +28,7 @@ function extend(TextClass) {
 
           if (match) {
             const icon = this.icons[key];
-            const scale = parseInt(this.style.fontSize, 10) / icon.texture.frame.height;
+            const scale = getFontSize() / icon.texture.frame.height;
             width -= match.length * measureText.call(ctx, key).width;
             width += match.length * (icon.x + icon.width) * scale;
           }
@@ -53,7 +57,7 @@ function extend(TextClass) {
           )
           .split(splitter);
 
-        const fontSize = parseInt(this.style.fontSize, 10);
+        const fontSize = getFontSize();
         let mx = x;
 
         for (let i = 0; i < parts.length; i++) {
