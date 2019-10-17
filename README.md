@@ -35,11 +35,14 @@ Make sure node_modules compilation is enabled in your project setup.
 
 ## Changelog
 
-#### 1.00 -> 1.2.0:
+#### 1.2.1:
+* Fix icon is not drown right after another one
+
+#### 1.2.0:
 * Fix phaser font size NaN
 * Center icon vertically, by default, for standard font
 
-#### 1.00 -> 1.1.0:
+#### 1.1.0:
 * Make icons size depend on text font size
 
 #### 1.0.0:

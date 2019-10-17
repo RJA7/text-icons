@@ -63,10 +63,10 @@ function extend(TextClass) {
         for (let i = 0; i < parts.length; i++) {
           const part = parts[i];
 
-          if (!part) continue;
-
-          fillText.call(ctx, part, mx, y);
-          mx += measureText.call(ctx, part).width;
+          if (part) {
+            fillText.call(ctx, part, mx, y);
+            mx += measureText.call(ctx, part).width;
+          }
 
           if (order.length === 0) continue;
 
