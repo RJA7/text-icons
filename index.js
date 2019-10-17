@@ -34,7 +34,7 @@ function extend(TextClass) {
           }
         }
 
-        return { width };
+        return {width};
       };
 
       ctx.fillText = (text, x, y, maxWidth) => {
@@ -44,7 +44,7 @@ function extend(TextClass) {
           return fillText.call(ctx, text, x, y, maxWidth);
         }
 
-        const splitter = 'f@*|₴i$|$T';
+        const splitter = '| p | e | a | c | e & s | e | c | u | r | i | t | y |';
         const order = [];
 
         const parts = text
@@ -75,9 +75,11 @@ function extend(TextClass) {
           const frame = icon.texture.frame;
           const tx = mx + icon.x * scale;
           const ty = y - fontSize * 0.35 + (icon.y - icon.height * 0.5) * scale;
+          const source = icon.texture.baseTexture.source ||
+            icon.texture.baseTexture.resource.source;
 
           ctx.drawImage(
-            icon.texture.baseTexture.source,
+            source,
             frame.x, frame.y, frame.width, frame.height,
             tx, ty, icon.width * scale, icon.height * scale,
           );
@@ -89,4 +91,4 @@ function extend(TextClass) {
   };
 }
 
-module.exports = { extend };
+module.exports = {extend};
