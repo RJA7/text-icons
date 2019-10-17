@@ -35,6 +35,9 @@ Make sure node_modules compilation is enabled in your project setup.
 
 ## Changelog
 
+#### 1.2.2:
+* Use new source place for pixi
+
 #### 1.2.1:
 * Fix icon is not drown right after another one
 
