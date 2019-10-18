@@ -9,7 +9,7 @@ Works with PIXI as well as Phaser.
 <pre>
 import textIcons from 'text-icons';
 
-PIXI.Text = textIcons.extend(PIXI.Text); // or Phaser.Text = textIcons.extend(Phaser.Text);
+textIcons.extend(PIXI.Text); // or textIcons.extend(Phaser.Text);
 </pre>
 
 ## Usage
@@ -28,10 +28,6 @@ which require escapes in regex.
 Do not use `$`, `.` and others.
 
 Use letters, `@` and `_`.
-
-
-This module is written on es2015.
-Make sure node_modules compilation is enabled in your project setup.
 
 ## Changelog
 
