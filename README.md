@@ -31,6 +31,9 @@ Use letters, `@` and `_`.
 
 ## Changelog
 
+#### 2.0.0:
+* Don't override Library Text property
+
 #### 1.2.2:
 * Use new source place for pixi
 
