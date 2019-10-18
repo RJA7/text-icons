@@ -31,6 +31,8 @@ Use letters, `@` and `_`.
 
 ## Changelog
 
+#### 2.0.1:
+
 #### 2.0.0:
 * Don't override Library Text property
 

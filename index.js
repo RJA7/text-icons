@@ -15,7 +15,7 @@ function extend(TextClass) {
     const measureText = ctx.measureText;
     const fillText = ctx.fillText;
 
-    ctx.measureText = function () {
+    ctx.measureText = function (text) {
       const keys = self.icons && Object.keys(self.icons);
 
       if (!keys || keys.length === 0) {
