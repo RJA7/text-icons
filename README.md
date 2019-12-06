@@ -31,6 +31,9 @@ Use letters, `@` and `_`.
 
 ## Changelog
 
+#### 3.0.0:
+* Do not use texture trim
+
 #### 2.0.2:
 * Fix trimmed textures render
 
