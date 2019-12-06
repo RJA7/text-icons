@@ -77,16 +77,15 @@ function extend(TextClass) {
         const icon = order.shift();
         const scale = fontSize / icon.texture.frame.height;
         const frame = icon.texture.frame;
-        const trim = icon.texture.trim;
-        const tx = mx + icon.x * scale + trim.x;
-        const ty = y - fontSize * 0.35 + (icon.y - icon.height * 0.5) * scale + trim.y;
+        const tx = mx + icon.x * scale;
+        const ty = y - fontSize * 0.35 + (icon.y - icon.height * 0.5) * scale;
         const source = icon.texture.baseTexture.source ||
           icon.texture.baseTexture.resource.source;
 
         ctx.drawImage(
           source,
           frame.x, frame.y, frame.width, frame.height,
-          tx, ty, trim.width * scale, trim.height * scale,
+          tx, ty, frame.width * scale, frame.height * scale,
         );
 
         mx += (icon.x + icon.width) * scale;
