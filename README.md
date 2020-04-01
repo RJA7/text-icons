@@ -31,6 +31,9 @@ Use letters, `@` and `_`.
 
 ## Changelog
 
+#### 3.0.1:
+* Fix drawing with stroke
+
 #### 3.0.0:
 * Do not use texture trim
 
