@@ -13,7 +13,6 @@ function extend(TextClass) {
     const self = this;
     const ctx = this.context;
     const measureText = ctx.measureText;
-    const fillText = ctx.fillText;
 
     ctx.measureText = function (text) {
       const keys = self.icons && Object.keys(self.icons);
@@ -36,64 +35,74 @@ function extend(TextClass) {
         }
       }
 
-      return {width};
+      return { width };
     };
 
     ctx.measureText.textIconsFlag = true;
 
-    ctx.fillText = function (text, x, y, maxWidth) {
-      const keys = self.icons && Object.keys(self.icons);
+    ctx.strokeText = overrideDraw(this, ctx, ctx.strokeText, measureText, false);
+    ctx.fillText = overrideDraw(this, ctx, ctx.fillText, measureText, true);
+
+    return updateText.call(this, a, b, c, d);
+  };
+
+  function overrideDraw(textObject, ctx, drawMethod, measureText, drawIcons) {
+    return function (text, x, y, maxWidth) {
+      const keys = textObject.icons && Object.keys(textObject.icons);
 
       if (!keys || keys.length === 0) {
-        return fillText.call(ctx, text, x, y, maxWidth);
+        return drawMethod.call(ctx, text, x, y, maxWidth);
       }
 
       const splitter = '| p | e | a | c | e & s | e | c | u | r | i | t | y |';
       const order = [];
 
       const parts = text
-        .replace(
-          new RegExp(keys.join('|'), 'g'),
-          (match) => {
-            order.push(self.icons[match]);
-            return splitter;
-          },
-        )
+        .replace(new RegExp(keys.join('|'), 'g'), (match) => {
+          order.push(textObject.icons[match]);
+          return splitter;
+        })
         .split(splitter);
 
-      const fontSize = getFontSize(self);
+      const fontSize = getFontSize(textObject);
       let mx = x;
 
       for (let i = 0; i < parts.length; i++) {
         const part = parts[i];
 
         if (part) {
-          fillText.call(ctx, part, mx, y);
+          drawMethod.call(ctx, part, mx, y);
           mx += measureText.call(ctx, part).width;
         }
 
         if (order.length === 0) continue;
 
         const icon = order.shift();
-        const scale = fontSize / icon.texture.frame.height;
         const frame = icon.texture.frame;
-        const tx = mx + icon.x * scale;
-        const ty = y - fontSize * 0.35 + (icon.y - icon.height * 0.5) * scale;
-        const source = icon.texture.baseTexture.source ||
-          icon.texture.baseTexture.resource.source;
+        const scale = fontSize / frame.height;
 
-        ctx.drawImage(
-          source,
-          frame.x, frame.y, frame.width, frame.height,
-          tx, ty, frame.width * scale, frame.height * scale,
-        );
+        if (drawIcons) {
+          const tx = mx + icon.x * scale;
+          const ty = y - fontSize * 0.35 + (icon.y - icon.height * 0.5) * scale;
+          const source = icon.texture.baseTexture.source || icon.texture.baseTexture.resource.source;
+
+          ctx.drawImage(
+            source,
+            frame.x,
+            frame.y,
+            frame.width,
+            frame.height,
+            tx,
+            ty,
+            frame.width * scale,
+            frame.height * scale,
+          );
+        }
 
         mx += (icon.x + icon.width) * scale;
       }
     };
-
-    return updateText.call(this, a, b, c, d);
-  };
+  }
 }
 
-module.exports = {extend};
+module.exports = { extend };
