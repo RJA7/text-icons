@@ -1,108 +1,198 @@
-function extend(TextClass) {
-  const updateText = TextClass.prototype.updateText;
+"use strict";
 
-  function getFontSize(textObject) {
-    return parseInt(textObject.fontSize || textObject.style.fontSize, 10);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.extend = extend;
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+// @ts-ignore
+var ContextWrapper = /*#__PURE__*/function () {
+  function ContextWrapper() {
+    var _this = this;
+
+    _classCallCheck(this, ContextWrapper);
+
+    this.ctx = void 0;
+    this.icons = void 0;
+
+    this.fillTextCb = function (text, x, y, maxWidth) {
+      if (typeof maxWidth === 'number') {
+        _this.ctx.fillText(text, Math.floor(x), Math.floor(y), Math.floor(maxWidth));
+      } else {
+        _this.ctx.fillText(text, Math.floor(x), Math.floor(y));
+      }
+    };
+
+    this.strokeTextCb = function (text, x, y, maxWidth) {
+      if (typeof maxWidth === 'number') {
+        _this.ctx.strokeText(text, Math.floor(x), Math.floor(y), Math.floor(maxWidth));
+      } else {
+        _this.ctx.strokeText(text, Math.floor(x), Math.floor(y));
+      }
+    };
   }
 
-  TextClass.prototype.updateText = function (a, b, c, d) {
-    if (this.context.measureText.textIconsFlag) {
-      return updateText.call(this, a, b, c, d);
-    }
+  _createClass(ContextWrapper, [{
+    key: "measureText",
+    value: function measureText(text) {
+      var keys = Object.keys(this.icons);
+      var metrics = this.ctx.measureText(text);
 
-    const self = this;
-    const ctx = this.context;
-    const measureText = ctx.measureText;
-
-    ctx.measureText = function (text) {
-      const keys = self.icons && Object.keys(self.icons);
-
-      if (!keys || keys.length === 0) {
-        return measureText.call(ctx, text);
+      if (keys.length === 0) {
+        return metrics;
       }
 
-      let width = measureText.call(ctx, text).width;
+      var width = metrics.width;
+      var exec = /\d+/.exec(this.ctx.font);
+      var mHeight = Number(exec && exec[0] || 36);
 
-      for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        const match = text.match(new RegExp(key, 'g'));
+      for (var i = 0, l = keys.length; i < l; i++) {
+        var _key = keys[i];
+        var match = text.match(new RegExp(_key, 'g'));
 
         if (match) {
-          const icon = self.icons[key];
-          const scale = getFontSize(self) / icon.texture.frame.height;
-          width -= match.length * measureText.call(ctx, key).width;
-          width += match.length * (icon.x + icon.width) * scale;
+          var icon = this.icons[_key];
+          var frame = icon.texture.frame;
+          var scale = mHeight / frame.height;
+          var iconWidth = frame.width * icon.scale.x * scale;
+          width -= match.length * this.ctx.measureText(_key).width;
+          width += match.length * iconWidth;
         }
       }
 
-      return { width };
-    };
+      return _objectSpread(_objectSpread({}, metrics), {}, {
+        width: width
+      });
+    }
+  }, {
+    key: "fillText",
+    value: function fillText(text, x, y, maxWidth) {
+      this.fillOrStrokeTextWithIcons(this.fillTextCb, true, text, x, y, maxWidth);
+    }
+  }, {
+    key: "strokeText",
+    value: function strokeText(text, x, y, maxWidth) {
+      this.fillOrStrokeTextWithIcons(this.strokeTextCb, false, text, x, y, maxWidth);
+    }
+  }, {
+    key: "fillOrStrokeTextWithIcons",
+    value: function fillOrStrokeTextWithIcons(drawCb, isFill, text, x, y, maxWidth) {
+      var _this2 = this;
 
-    ctx.measureText.textIconsFlag = true;
+      var keys = Object.keys(this.icons);
 
-    ctx.strokeText = overrideDraw(this, ctx, ctx.strokeText, measureText, false);
-    ctx.fillText = overrideDraw(this, ctx, ctx.fillText, measureText, true);
-
-    return updateText.call(this, a, b, c, d);
-  };
-
-  function overrideDraw(textObject, ctx, drawMethod, measureText, drawIcons) {
-    return function (text, x, y, maxWidth) {
-      const keys = textObject.icons && Object.keys(textObject.icons);
-
-      if (!keys || keys.length === 0) {
-        return drawMethod.call(ctx, text, x, y, maxWidth);
+      if (keys.length === 0) {
+        return drawCb(text, x, y, maxWidth);
       }
 
-      const splitter = '| p | e | a | c | e & s | e | c | u | r | i | t | y |';
-      const order = [];
+      var isShadow = this.ctx.shadowBlur !== 0 || this.ctx.shadowOffsetX !== 0 || this.ctx.shadowOffsetY !== 0;
+      var splitter = '!#$@-%';
+      var order = [];
+      var parts = text.replace(new RegExp(keys.join('|'), 'g'), function (match) {
+        order.push(_this2.icons[match]);
+        return splitter;
+      }).split(splitter);
+      var exec = /\d+/.exec(this.ctx.font);
+      var mHeight = Number(exec && exec[0] || 36);
+      var mx = x;
 
-      const parts = text
-        .replace(new RegExp(keys.join('|'), 'g'), (match) => {
-          order.push(textObject.icons[match]);
-          return splitter;
-        })
-        .split(splitter);
-
-      const fontSize = getFontSize(textObject);
-      let mx = x;
-
-      for (let i = 0; i < parts.length; i++) {
-        const part = parts[i];
+      for (var i = 0; i < parts.length; i++) {
+        var part = parts[i];
+        var icon = order.shift();
 
         if (part) {
-          drawMethod.call(ctx, part, mx, y);
-          mx += measureText.call(ctx, part).width;
+          drawCb(part, mx, y);
+          mx += this.ctx.measureText(part).width;
         }
 
-        if (order.length === 0) continue;
+        if (icon) {
+          var frame = icon.texture.frame;
+          var scale = mHeight / frame.height;
+          var iconX = icon.x * scale;
+          var iconY = icon.y * scale;
+          var iconWidth = frame.width * icon.scale.x * scale;
+          var iconHeight = frame.height * icon.scale.y * scale;
 
-        const icon = order.shift();
-        const frame = icon.texture.frame;
-        const scale = fontSize / frame.height;
+          if (isShadow ? icon.shadow : isFill) {
+            var _icon$texture$baseTex;
 
-        if (drawIcons) {
-          const tx = mx + icon.x * scale;
-          const ty = y - fontSize * 0.35 + (icon.y - icon.height * 0.5) * scale;
-          const source = icon.texture.baseTexture.source || icon.texture.baseTexture.resource.source;
+            var tx = mx + iconX;
+            var ty = y - mHeight * 0.4 + iconY - iconHeight * 0.5; // @ts-ignore
 
-          ctx.drawImage(
-            source,
-            frame.x,
-            frame.y,
-            frame.width,
-            frame.height,
-            tx,
-            ty,
-            frame.width * scale,
-            frame.height * scale,
-          );
+            var source = icon.texture.baseTexture.source || ((_icon$texture$baseTex = icon.texture.baseTexture.resource) === null || _icon$texture$baseTex === void 0 ? void 0 : _icon$texture$baseTex.source);
+
+            if (source) {
+              this.ctx.drawImage(source, frame.x, frame.y, frame.width, frame.height, Math.floor(tx), Math.floor(ty), Math.floor(iconWidth), Math.floor(iconHeight));
+            }
+          }
+
+          mx += iconWidth;
         }
-
-        mx += (icon.x + icon.width) * scale;
       }
-    };
-  }
-}
+    }
+  }]);
 
-module.exports = { extend };
+  return ContextWrapper;
+}();
+
+var contextWrapper = new ContextWrapper();
+['canvas', 'globalAlpha', 'globalCompositeOperation', 'direction', 'fillStyle', 'filter', 'font', 'imageSmoothingEnabled', 'imageSmoothingQuality', 'lineCap', 'lineDashOffset', 'lineJoin', 'lineWidth', 'miterLimit', 'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'strokeStyle', 'textAlign', 'textBaseline'].forEach(function (prop) {
+  Object.defineProperty(contextWrapper, prop, {
+    get: function get() {
+      return this.ctx[prop];
+    },
+    set: function set(v) {
+      this.ctx[prop] = v;
+    }
+  });
+});
+['beginPath', 'arc', 'arcTo', 'bezierCurveTo', 'clearRect', 'clip', 'closePath', 'createImageData', 'createLinearGradient', 'createPattern', 'createRadialGradient', 'drawFocusIfNeeded', 'drawImage', 'ellipse', 'fill', 'fillRect', 'getImageData', 'getLineDash', 'getTransform', 'isPointInPath', 'isPointInStroke', 'lineTo', 'moveTo', 'putImageData', 'quadraticCurveTo', 'rect', 'resetTransform', 'restore', 'translate', 'transform', 'strokeRect', 'stroke', 'setTransform', 'setLineDash', 'scrollPathIntoView', 'scale', 'save', 'rotate'].forEach(function (method) {
+  // @ts-ignore
+  contextWrapper[method] = function () {
+    var _contextWrapper$ctx;
+
+    return (_contextWrapper$ctx = contextWrapper.ctx)[method].apply(_contextWrapper$ctx, arguments);
+  };
+}); // @ts-ignore
+
+function extend(PIXI) {
+  var updateText = PIXI.Text.prototype.updateText;
+  var measureText = PIXI.TextMetrics.measureText;
+  var canvasWrapper = {
+    getContext: function getContext() {
+      return contextWrapper;
+    }
+  };
+
+  PIXI.Text.prototype.updateText = function (respectDirty) {
+    if (this.icons) {
+      contextWrapper.ctx = this.context;
+      contextWrapper.icons = this.icons;
+      this.context = contextWrapper;
+    }
+
+    updateText.call(this, respectDirty);
+
+    if (this.context === contextWrapper) {
+      this.context = contextWrapper.ctx;
+      contextWrapper.icons = null;
+      contextWrapper.ctx = null;
+    }
+  };
+
+  PIXI.TextMetrics.measureText = function (text, style, wordWrap, canvas) {
+    return measureText(text, style, wordWrap, contextWrapper.ctx ? canvasWrapper : canvas);
+  };
+}

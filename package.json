@@ -1,8 +1,11 @@
 {
   "name": "text-icons",
-  "version": "3.0.1",
+  "version": "4.0.12",
   "description": "The tool allows to inline sprites into text. Can be used with PIXI as well as Phaser",
   "main": "index.js",
+  "scripts": {
+    "compile": "babel index.ts --out-file index.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/RJA7/text-icons"
@@ -14,5 +17,15 @@
     "phaser"
   ],
   "author": "RJA",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/preset-typescript": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/plugin-proposal-optional-chaining": "^7.9.0",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5"
+  }
 }
